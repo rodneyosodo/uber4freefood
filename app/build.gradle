@@ -42,7 +42,6 @@ dependencies {
     implementation 'com.google.android.gms:play-services-gcm:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    implementation 'com.google.maps.android:android-maps-utils-sdk-v3-compat:0.1'
 
     //connection and network Dependencies
     implementation 'com.github.bumptech.glide:glide:4.8.0'
