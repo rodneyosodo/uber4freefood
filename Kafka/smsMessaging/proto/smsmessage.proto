@@ -1,0 +1,16 @@
+// to recompile this proto run
+//python -m grpc_tools.protoc -I./proto --python_out=. --grpc_python_out=. ./proto/smsmessage.proto
+syntax = "proto3";
+
+message SendSmsRequest{
+    string client_number = 1;
+    string message = 2;
+}
+
+message SendSmsReponse {
+    string message_id = 1;
+}
+
+service SMSMessaging {
+    rpc send_req (SendSmsRequest) returns (SendSmsReponse) {}
+}
