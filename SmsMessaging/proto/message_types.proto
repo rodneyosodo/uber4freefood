@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package textmessages;
+
+message TextMessage {
+    string text = 1;
+    string message_id = 2;
+}
+
+message SendSmsRequest{
+    string client_number = 1;
+    string message = 2;
+}
+
+message SendSmsReponse {
+    TextMessage textMessage = 1;
+}
