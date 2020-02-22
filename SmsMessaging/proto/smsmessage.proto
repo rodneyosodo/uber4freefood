@@ -1,0 +1,9 @@
+// to recompile this proto run
+//python -m grpc_tools.protoc -I./proto --python_out=. --grpc_python_out=. ./proto/smsmessage.proto
+syntax = "proto3";
+
+import "message_types.proto";
+
+service SMSMessaging {
+    rpc SendMessage (textmessages.SendSmsRequest) returns (stream textmessages.SendSmsReponse) {}
+}
