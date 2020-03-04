@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_package = "com.cloudMessaging.cloud";
+
+service messages {
+		
+		rpc messageIn( Empty) returns (Text ) ;
+		rpc send(Text ) returns ( delivery);
+		
+		}
+		
+message Text {
+	
+	string text = 1;
+	
+	}
+		
+message delivery {
+
+	string responseCode = 1;
+	}
+	
+message Empty { }
