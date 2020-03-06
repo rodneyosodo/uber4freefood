@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    tools:context=".LogInActivity">
+
+    <ImageView
+        android:id="@+id/arrowBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_margin="10dp"
+        app:srcCompat="@drawable/ic_arrow_back_black_24dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/arrowBack"
+        android:layout_margin="20dp"
+        android:layout_centerVertical="true"
+        android:layout_centerInParent="true"
+        >
+
+
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="0dp"
+        android:text="Log In"
+        android:textStyle="bold"
+        android:textSize="40sp"
+        android:textColor="@android:color/background_light"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="50dp">
+
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:id="@+id/edtEmail"
+                android:inputType="textEmailAddress"
+                android:textSize="16sp"
+                app:met_floatingLabel="normal"
+                app:met_baseColor="@android:color/white"
+                app:met_primaryColor="#cffd02"
+                app:met_floatingLabelTextSize="19sp"
+                app:met_floatingLabelTextColor="@android:color/white"
+                app:met_iconLeft="@drawable/ic_person_outline_white_24dp"
+                android:drawableLeft="@drawable/ic_person_outline_white_24dp"
+                app:met_textColorHint="@android:color/white"
+                app:met_iconPadding="5dp"
+                android:hint="Email"/>
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:id="@+id/edtPassword"
+                android:inputType="textPassword"
+                app:met_floatingLabel="normal"
+                app:met_baseColor="@android:color/white"
+                app:met_primaryColor="#cffd02"
+                app:met_floatingLabelTextSize="19sp"
+                app:met_floatingLabelTextColor="@android:color/white"
+                android:drawableLeft="@drawable/ic_lock_outline_white_24dp"
+                app:met_iconLeft="@drawable/ic_lock_outline_white_24dp"
+                app:met_textColorHint="@android:color/white"
+                android:hint="Password"/>
+
+
+            <LinearLayout
+                android:layout_alignParentBottom="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="70dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_centerHorizontal="true">
+
+                <life.sabujak.roundedbutton.RoundedButton
+                    android:id="@+id/btnLogIn"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:gravity="center"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:padding="15dp"
+                    android:text="Log In"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    app:buttonColor="@color/colorAllButtons"
+                    app:buttonCornerRadius="30dp" />
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="end">
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:textSize="14sp"
+                        android:textColor="@android:color/white"
+                        android:text="First Time here?"/>
+
+                    <TextView
+                        android:id="@+id/txtSignUp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="0dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorMiscellaneous"
+                        android:textStyle="bold"
+                        android:text="Sign Up!"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</RelativeLayout>
