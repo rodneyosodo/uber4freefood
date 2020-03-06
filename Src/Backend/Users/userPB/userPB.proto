@@ -1,0 +1,22 @@
+//protoc -I userPB/ userPB/userPB.proto --go_out=plugins=grpc:userPB
+syntax = "proto3";
+package userPB;
+
+message loginReq{
+    string username = 1;
+    string pwad = 2;
+}
+message loginRes{
+    string token = 1;
+}
+message regDetails{
+    string username = 1;
+    string password = 2;
+    string usertype = 3;
+    string company = 4;
+    string email =5;
+}
+service authService{
+    rpc Login(loginReq) returns (loginRes);
+    rpc Signup(regDetails) returns (loginRes);
+}
