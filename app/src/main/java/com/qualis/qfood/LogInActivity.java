@@ -1,6 +1,8 @@
 package com.qualis.qfood;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.qualis.qfood.Service.ServiceGRPC;
 import com.qualis.qfood.Tools.Converter;
 
 import android.os.Bundle;
@@ -54,7 +56,10 @@ public class LogInActivity extends AppCompatActivity {
                 else{
                     try {
                         String encryptedPassword = Converter.SHA1(password);
-                        Toast.makeText(LogInActivity.this,encryptedPassword ,Toast.LENGTH_LONG).show();
+
+                        LoginResponse response = ServiceGRPC.loginService( "192.168.0.0.1", 1080,email, encryptedPassword);
+
+                        Toast.makeText(LogInActivity.this,response.toString() ,Toast.LENGTH_LONG).show();
 
                     } catch (NoSuchAlgorithmException e) {
                         e.printStackTrace();

@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.protobuf'
+
 
 android {
     compileSdkVersion 29
@@ -18,6 +20,41 @@ android {
         }
     }
 }
+
+
+repositories {
+    maven { url 'https://jitpack.io' }
+    maven { url "https://plugins.gradle.org/m2/" }
+}
+
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.8'
+    }
+}
+
+protobuf {
+    protoc { artifact = 'com.google.protobuf:protoc:3.11.0' }
+    plugins {
+        grpc { artifact = 'io.grpc:protoc-gen-grpc-java:1.27.0'
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java { option 'lite' }
+            }
+            task.plugins {
+                grpc { 
+                    option 'lite' }
+            }
+        }
+    }
+}
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -52,10 +89,12 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
 
-    implementation 'io.grpc:grpc-android:1.24.0'
-    implementation 'io.grpc:grpc-okhttp:1.24.0'
+
+    //  GRPC dependencies
+    implementation 'io.grpc:grpc-okhttp:1.27.0'
+    implementation 'io.grpc:grpc-protobuf-lite:1.27.0'
+    implementation 'io.grpc:grpc-stub:1.27.0'
+    implementation 'javax.annotation:javax.annotation-api:1.2'
 
 }
-repositories {
-    maven { url 'https://jitpack.io' }
-}
+
