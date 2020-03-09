@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+
+message CancelDeliveryRequest {
+    string order_no = 1;
+    string request_token_id = 2;
+}
+
+message CancelDeliveryResponse {
+    string status = 1;
+    string data = 2;
+    string request_token_id = 3;
+}
+
+message RequestDeliveryRequest {
+    string command = 1;
+    string vendor_type = 2;
+    string rider_phone = 3;
+    string from_name = 4;
+    string from_lat = 5;
+    string from_long = 6;
+    string from_description = 7;
+    string to_name = 8;
+    string to_lat = 9;
+    string to_long = 10;
+    string to_description = 11;
+    string recepient_name = 12;
+    string recepient_phone = 13;
+    string recepient_email = 14;
+    string recepient_notes = 15;
+    string sender_name = 16;
+    string sender_phone = 17;
+    string sender_email = 18;
+    string sender_notes = 19;
+    string pick_up_date = 20;
+    string status = 21;
+    string pay_method = 22;
+    string amount = 23;
+    string return = 24;
+    string note = 25;
+    string note_status = 26;
+    string request_type = 27;
+    string order_type = 28;
+    string ecommerce_order = 29;
+    string express = 30;
+    string skew = 31;
+    string weight = 32;
+    string height = 33;
+    string width = 34;
+    string length = 35;
+    string item_name = 36;
+    string request_token_id = 37;
+}
+
+message RequestDeliveryResponse {
+    string status = 1;
+    string data = 2;
+    string request_token_id = 3;    
+}
+
+message TrackDeliveryRequest {
+    string order_no = 1;
+    string request_token_id = 2; 
+}
+
+message TrackDeliveryResponse {
+    string status = 1;
+    string order_no = 2;
+    string order_status = 3;
+    string rider_name = 4;
+    string rider_phone = 5;
+    string rider_pic = 6;
+    string rider_tracking = 7;
+    string number_plate = 8;
+    string vehicle_make = 9;
+    string request_token_id = 10;
+}
+
+service Users {
+    rpc CancelDelivery (CancelDeliveryRequest) returns (CancelDeliveryResponse);
+    rpc RequestDelivery (RequestDeliveryRequest) returns (stream RequestDeliveryResponse);
+    rpc TrackDelivery (TrackDeliveryRequest) returns (stream TrackDeliveryResponse);
+}
