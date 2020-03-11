@@ -1,11 +1,16 @@
 from flask import Flask, request, jsonify
-import requests, json
+import requests, json, os
+from dotenv import load_dotenv
 
+load_dotenv("secrets.env")
+
+api_key = os.environ.get("api_key")
+api_username = os.environ.get("api_username")
 app = Flask(__name__)
 
 def make_request(data, url):
-    data['data']['api_key'] = "aOYE0BD3rz03QKPXUx4R"
-    data['data']['api_username'] = "qualis"
+    data['data']['api_key'] = api_key
+    data['data']['api_username'] = api_username
     headers = {
     'Content-Type': 'application/json'
     }
