@@ -42,7 +42,7 @@ def track_delivery():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0", port=5000)
 
 
 # curl  --header "Content-Type: application/json" --request POST  --data '{"command": "cancel","data": {"api_key": "aOYE0BD3rz03QKPXUx4R","api_username": "qualis","order_no": "AN82TT944-33W"},"request_token_id": "request_token_id"}'  http://localhost:5000/canceldelivery
