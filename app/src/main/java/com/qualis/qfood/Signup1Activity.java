@@ -90,10 +90,11 @@ public class Signup1Activity extends AppCompatActivity {
                     HashMap<String, String> mapFirstPage = new HashMap<>();
                     mapFirstPage.put("FirstName", firstName);
                     mapFirstPage.put("LastName", lastName);
-                    mapFirstPage.put("Image data",imgdata.toString());
+
 
                     Intent signup2 = new Intent(Signup1Activity.this, Signup2Activity.class);
                     signup2.putExtra("hashMap", mapFirstPage);
+                    signup2.putExtra("picture", imgdata);
                     startActivity(signup2);
                 }
 
@@ -121,11 +122,6 @@ public class Signup1Activity extends AppCompatActivity {
                 byte[] databaos = baos.toByteArray();
 
                 imgdata = databaos;
-
-
-
-
-
 
 
             }

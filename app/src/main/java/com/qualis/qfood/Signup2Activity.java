@@ -1,5 +1,6 @@
 package com.qualis.qfood;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -10,16 +11,26 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.qualis.qfood.Tools.Converter;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import life.sabujak.roundedbutton.RoundedButton;
 
 public class Signup2Activity extends AppCompatActivity {
+
+    StorageReference firebaseStorageReference = FirebaseStorage.getInstance().getReference();
 
     TextView txtAngel;
     ImageView arrowBack;
@@ -43,6 +54,10 @@ public class Signup2Activity extends AppCompatActivity {
         HashMap<String, String> mapSecondPage = new HashMap();
 
         mapSecondPage = (HashMap<String, String>) getIntent().getSerializableExtra("hashMap");
+
+        Bundle extras = getIntent().getExtras();
+        final byte[] byteArray = extras.getByteArray("picture");
+
         Toast.makeText(this, mapSecondPage.toString(),Toast.LENGTH_LONG).show();
 
         arrowBack.setOnClickListener(new View.OnClickListener() {
@@ -86,13 +101,29 @@ public class Signup2Activity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
+                    SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+                    String currentDateTime = dateTimeFormat.format(new Date());
 
+                    final String profilePicName = finalMapSecondPage.get("FirstName") + finalMapSecondPage.get("FirstName") + currentDateTime;
+
+
+
+                    StorageReference profilePicRef = firebaseStorageReference.child("ProfilePictures").child(profilePicName);
+                    UploadTask uploadTask = profilePicRef.putBytes(byteArray);
 
                     finalMapSecondPage.put("Email", email);
                     finalMapSecondPage.put("Phone", phoneNumber);
                     finalMapSecondPage.put("Password",password);
+                    finalMapSecondPage.put("ProfilePicName", profilePicName);
 
-                    Toast.makeText(Signup2Activity.this, finalMapSecondPage.toString(),Toast.LENGTH_LONG).show();;
+                    uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                            Toast.makeText(Signup2Activity.this, profilePicName,Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+
 
 
                 }
