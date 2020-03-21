@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "808228760227",
+    "firebase_url": "https://qualeats.firebaseio.com",
+    "project_id": "qualeats",
+    "storage_bucket": "qualeats.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:808228760227:android:76f0be763ec090801c2d16",
+        "android_client_info": {
+          "package_name": "com.qualis.qfood"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "808228760227-qm66md23cs426d9l0405cbjsn2o97f1k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.qualis.qfood",
+            "certificate_hash": "2179c0af16bbf342a915c37c35d0b6c8d30b1c76"
+          }
+        },
+        {
+          "client_id": "808228760227-kt6dnojaeuisdrij5nm9cao2rivj09pv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBG9FdgNKjNM0Xc6056PxfFBldf_uArYFU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "808228760227-kt6dnojaeuisdrij5nm9cao2rivj09pv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

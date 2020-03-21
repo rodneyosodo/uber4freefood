@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.qualis.qfood";
+
+option java_outer_classname = "LoginProto";
+
+service authService{
+    rpc Login(LoginReq) returns (LoginRes);
+    rpc Signup(RegDetails) returns (LoginRes);
+}
+
+message LoginReq{
+    string username = 1;
+    string pwad = 2;
+}
+message LoginRes{
+    string token = 1;
+}
+message RegDetails{
+    string username = 1;
+    string password = 2;
+    string usertype = 3;
+    string company = 4;
+    string email =5;
+}
