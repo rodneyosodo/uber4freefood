@@ -24,11 +24,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.qualis.qfood.Tools.Converter;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +40,7 @@ import life.sabujak.roundedbutton.RoundedButton;
 public class LogInActivity extends AppCompatActivity {
 
     ImageView arrowBack;
-    com.rengwuxian.materialedittext.MaterialEditText edtUsername, edtPassword;
+    com.rengwuxian.materialedittext.MaterialEditText edtEmail, edtPassword;
     TextView txtSignUp;
     life.sabujak.roundedbutton.RoundedButton btnLogin;
 
@@ -48,7 +51,7 @@ public class LogInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_log_in);
 
         arrowBack = (ImageView)findViewById(R.id.arrowBack);
-        edtUsername = (MaterialEditText)findViewById(R.id.edtEmail);
+        edtEmail = (MaterialEditText)findViewById(R.id.edtEmail);
         edtPassword = (MaterialEditText)findViewById(R.id.edtPassword);
         btnLogin =(RoundedButton)findViewById(R.id.btnLogIn);
         txtSignUp = (TextView)findViewById(R.id.txtSignUp);
@@ -70,18 +73,29 @@ public class LogInActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = edtUsername.getText().toString().trim();
+                String email = edtEmail.getText().toString().trim();
                 String password = edtPassword.getText().toString();
-                if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)){
+
+                if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)){
                     Toast.makeText(LogInActivity.this,"Kindly fill all details to proceed",Toast.LENGTH_LONG).show();
                 }
-                else if ( password.length() < 4 ){
+                else if ( password.length() < 8 ){
                     Toast.makeText(LogInActivity.this,"Password cannot be less that 8 characters",Toast.LENGTH_LONG).show();
                 }
                 else{
 
+                    Converter pwdConverter = new Converter();
+
                     try {
-                        loginMethod(username,password);
+                        password = pwdConverter.SHA1(password);
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        loginMethod(email,password);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

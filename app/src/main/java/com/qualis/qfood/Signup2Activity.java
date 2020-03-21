@@ -10,8 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.qualis.qfood.Tools.Converter;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 import life.sabujak.roundedbutton.RoundedButton;
@@ -69,11 +72,27 @@ public class Signup2Activity extends AppCompatActivity {
                 if (TextUtils.isEmpty(email) || TextUtils.isEmpty(phoneNumber) || TextUtils.isEmpty(password)){
                     Toast.makeText(Signup2Activity.this,"Kindly fill all details to proceed",Toast.LENGTH_LONG).show();
                 }
+                else  if(TextUtils.getTrimmedLength(password) < 8) {
+                    Toast.makeText(Signup2Activity.this,"Password must be greater than 8 characters",Toast.LENGTH_LONG).show();
+
+                }
                 else{
+                    Converter pwdRegConvert = new Converter();
+                    try {
+                        password = pwdRegConvert.SHA1(password);
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+
+
                     finalMapSecondPage.put("Email", email);
                     finalMapSecondPage.put("Phone", phoneNumber);
                     finalMapSecondPage.put("Password",password);
 
+                    Toast.makeText(Signup2Activity.this, finalMapSecondPage.toString(),Toast.LENGTH_LONG).show();;
 
 
                 }
