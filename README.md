@@ -37,3 +37,16 @@ body
     "status": 
 }
 ```
+###### Token
+Type : `JWT`
+key: in `.env` file
+body:
+```
+{
+ alg: "HS256",
+ typ: "JWT"
+}.
+{
+ UserId: 
+}.
+```
