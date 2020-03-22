@@ -1,12 +1,13 @@
 package models
 
 import (
-	"github.com/dgrijalva/jwt-go"
-	"github.com/jinzhu/gorm"
-	u "userService2/utils"
-	"golang.org/x/crypto/bcrypt"
 	"os"
 	"strings"
+	u "userService2/utils"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/jinzhu/gorm"
+	"golang.org/x/crypto/bcrypt"
 )
 
 /*
@@ -20,9 +21,14 @@ type Token struct {
 //a struct to rep user account
 type Account struct {
 	gorm.Model
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Token    string `json:"token";sql:"-"`
+	Email          string `json:"email"`
+	FirstName      string `json:"firstname"`
+	LastName       string `json:"lastname"`
+	Phonenumber    string `json:"phonenumber"`
+	Usertype       string `json:"usertype"`
+	ProfilePicName string `json:"profilepicname"`
+	Password       string `json:"password"`
+	Token          string `json:"token";sql:"-"`
 }
 
 //Validate incoming user details...
@@ -51,7 +57,7 @@ func (account *Account) Validate() (map[string]interface{}, bool) {
 	return u.Message(false, "Requirement passed"), true
 }
 
-func (account *Account) Create() (map[string]interface{}) {
+func (account *Account) Create() map[string]interface{} {
 
 	if resp, ok := account.Validate(); !ok {
 		return resp
@@ -79,7 +85,7 @@ func (account *Account) Create() (map[string]interface{}) {
 	return response
 }
 
-func Login(email, password string) (map[string]interface{}) {
+func Login(email, password string) map[string]interface{} {
 
 	account := &Account{}
 	err := GetDB().Table("accounts").Where("email = ?", email).First(account).Error
