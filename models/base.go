@@ -25,7 +25,7 @@ func init() {
 	dbUri := fmt.Sprintf("host=%s port=5432 user=%s dbname=%s sslmode=disable password=%s", dbHost, username, dbName, password)
 	fmt.Println(dbUri)
 
-	conn, err := gorm.Open("postgres","host=localhost port=5432 user=postgres dbname=users sslmode=disable password=#Avrilla8")
+	conn, err := gorm.Open("postgres", "host=localhost port=5432 user=postgres dbname=users sslmode=disable password=#Avrilla8")
 	if err != nil {
 		fmt.Print(err)
 	}
