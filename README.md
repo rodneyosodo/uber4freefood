@@ -39,7 +39,9 @@ body
 ```
 ###### Token
 Type : `JWT`
+
 key: in `.env` file
+
 body:
 ```
 {
