@@ -122,6 +122,8 @@ public class Signup2Activity extends AppCompatActivity {
                             Toast.makeText(Signup2Activity.this, profilePicName,Toast.LENGTH_LONG).show();
                         }
                     });
+                    Intent mainActivity = new Intent(Signup2Activity.this, MainActivity.class);
+                    startActivity(mainActivity);
 
 
 
