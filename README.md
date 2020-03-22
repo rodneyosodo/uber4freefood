@@ -16,7 +16,8 @@ body `json`
 `{"email": "", "firstname": "", "lastname": "", "phonenumber": "", "usertype": "", "profilepicname": "","password": ""}`
 
 ###### Response
-body ```
+body 
+```
 {
     "account": {
         "ID": ,
