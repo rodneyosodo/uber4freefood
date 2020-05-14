@@ -23,3 +23,9 @@ docker-compose build
 docker-compose up -d
 ```
 
+## Shutdown
+```sh
+docker-compose down
+```
+
+
