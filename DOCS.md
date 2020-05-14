@@ -12,3 +12,14 @@ What is basically does the user post its location to the kafka backend which a c
 - Docker compose
 - Python (for testing)
 
+
+## Setup
+```sh
+git fetch --all
+git checkout kafka-streaming
+cd Kafka
+docker-compose pull
+docker-compose build
+docker-compose up -d
+```
+
