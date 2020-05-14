@@ -28,4 +28,15 @@ docker-compose up -d
 docker-compose down
 ```
 
-
+## Testing
+I wrote a simple python program to push and pull data to the kafka stream
+#### For pushing data to the kafka stream 
+```sh
+cd Helpers
+python3 producer.py
+```
+#### For pushing data to the kafka stream 
+```sh
+cd Helpers
+python3 consumer.py
+```
