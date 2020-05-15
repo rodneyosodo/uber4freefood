@@ -40,3 +40,7 @@ python3 producer.py
 cd Helpers
 python3 consumer.py
 ```
+
+## Configurations
+- Topic = user._id
+- message = user._location
