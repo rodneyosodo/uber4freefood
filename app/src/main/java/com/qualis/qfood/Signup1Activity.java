@@ -88,8 +88,8 @@ public class Signup1Activity extends AppCompatActivity {
                 }
                 else{
                     HashMap<String, String> mapFirstPage = new HashMap<>();
-                    mapFirstPage.put("FirstName", firstName);
-                    mapFirstPage.put("LastName", lastName);
+                    mapFirstPage.put("firstname", firstName);
+                    mapFirstPage.put("lastname", lastName);
 
 
                     Intent signup2 = new Intent(Signup1Activity.this, Signup2Activity.class);

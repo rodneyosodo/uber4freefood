@@ -2,45 +2,38 @@ package com.qualis.qfood.Model;
 
 public class User {
 
-    private String firstName;
-    private String lastName;
-    private String phoneNumber;
+    private long ID;
     private String email;
-    private String authToken;
+
+    private String firstname;
+    private String lastname;
+
+    private String phonenumber;
+    private String profilepicname;
+
+    private String token;
+    private String usertype;
 
     public User() {
     }
 
-    public User(String firstName, String lastName, String phoneNumber, String email, String authToken) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phoneNumber = phoneNumber;
+    public User(long ID, String email, String firstname, String lastname, String phonenumber, String profilepicname, String token, String usertype) {
+        this.ID = ID;
         this.email = email;
-        this.authToken = authToken;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.phonenumber = phonenumber;
+        this.profilepicname = profilepicname;
+        this.token = token;
+        this.usertype = usertype;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public long getID() {
+        return ID;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setID(long ID) {
+        this.ID = ID;
     }
 
     public String getEmail() {
@@ -51,11 +44,53 @@ public class User {
         this.email = email;
     }
 
-    public String getAuthToken() {
-        return authToken;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setAuthToken(String authToken) {
-        this.authToken = authToken;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public String getPhonenumber() {
+        return phonenumber;
+    }
+
+    public void setPhonenumber(String phonenumber) {
+        this.phonenumber = phonenumber;
+    }
+
+    public String getProfilepicname() {
+        return profilepicname;
+    }
+
+    public void setProfilepicname(String profilepicname) {
+        this.profilepicname = profilepicname;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getUsertype() {
+        return usertype;
+    }
+
+    public void setUsertype(String usertype) {
+        this.usertype = usertype;
     }
 }
+
+

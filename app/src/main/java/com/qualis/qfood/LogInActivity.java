@@ -7,20 +7,23 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.qualis.qfood.Common.Common;
 import com.qualis.qfood.Model.User;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +33,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -37,12 +41,16 @@ import java.util.Map;
 
 import life.sabujak.roundedbutton.RoundedButton;
 
+
+
 public class LogInActivity extends AppCompatActivity {
 
     ImageView arrowBack;
     com.rengwuxian.materialedittext.MaterialEditText edtEmail, edtPassword;
     TextView txtSignUp;
     life.sabujak.roundedbutton.RoundedButton btnLogin;
+    ProgressDialog progressDialog;
+
 
 
     @Override
@@ -55,6 +63,7 @@ public class LogInActivity extends AppCompatActivity {
         edtPassword = (MaterialEditText)findViewById(R.id.edtPassword);
         btnLogin =(RoundedButton)findViewById(R.id.btnLogIn);
         txtSignUp = (TextView)findViewById(R.id.txtSignUp);
+
 
 
         arrowBack.setOnClickListener(new View.OnClickListener() {
@@ -83,6 +92,10 @@ public class LogInActivity extends AppCompatActivity {
                     Toast.makeText(LogInActivity.this,"Password cannot be less that 8 characters",Toast.LENGTH_LONG).show();
                 }
                 else{
+                    progressDialog = new ProgressDialog(LogInActivity.this, R.style.ProgressDialogStyle);
+                    progressDialog.setMessage("Please Wait..");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
 
                     Converter pwdConverter = new Converter();
 
@@ -95,14 +108,10 @@ public class LogInActivity extends AppCompatActivity {
                     }
 
                     try {
-                        loginMethod(email,password);
+                        loginRequest(email,password);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-                    User user = new User();
-
-                       // Common.currentUser = user;
 
 
                 }
@@ -110,10 +119,10 @@ public class LogInActivity extends AppCompatActivity {
         });
     }
 
-    private void loginMethod(final String uname, final String pwd) throws JSONException {
+    private void loginRequest(final String uname, final String pwd) throws JSONException {
 
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://userservice3.herokuapp.com/api/user/login";
+        String URL = "https://2a80e91f.ngrok.io/api/user/login";
 
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("email", uname);
@@ -128,7 +137,13 @@ public class LogInActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Toast.makeText(LogInActivity.this, response.toString(), Toast.LENGTH_LONG).show();
+
+
+                        try {
+                            loginCheck(response);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                 }, new Response.ErrorListener() {
@@ -152,5 +167,79 @@ public class LogInActivity extends AppCompatActivity {
         requestQueue.add(jsonObjReq);
 
     }
+
+    private void loginCheck(JSONObject response) throws IOException {
+
+        String message = null;
+        try {
+            message = response.getString("message");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Boolean status = null;
+        try {
+            status = response.getBoolean("status");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if(message.equals("Logged In") && status == true){
+            JSONObject account = null;
+
+            try {
+                account = response.getJSONObject("account");
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            User user = mapper.readValue(account.toString(), User.class);
+
+
+
+
+            Toast.makeText(LogInActivity.this,  user.getPhonenumber(), Toast.LENGTH_LONG).show();
+
+            String userType = user.getUsertype();
+
+
+            if (userType.equals("human")){
+
+
+                while(Common.currentUser == null){
+                    Common.currentUser = user;
+                }
+
+
+                Intent mainActivity = new Intent(LogInActivity.this, MainActivity.class);
+                mainActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                progressDialog.dismiss();
+                startActivity(mainActivity);
+
+
+
+            }
+            else{
+                Toast.makeText(LogInActivity.this, "Invalid User.", Toast.LENGTH_LONG).show();
+            }
+
+
+
+        }else {
+            Toast.makeText(LogInActivity.this, message, Toast.LENGTH_LONG).show();
+        }
+
+
+
+    }
+
+
 
 }

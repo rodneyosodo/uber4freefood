@@ -1,79 +1,58 @@
-package com.qualis.qfood.ui.home;
+package com.qualis.qfood;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import android.location.Criteria;
+import android.location.Location;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.qualis.qfood.MainActivity;
 import com.qualis.qfood.MapRoutesHelper.FetchURL;
 import com.qualis.qfood.MapRoutesHelper.TaskLoadedCallback;
-import com.qualis.qfood.R;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
-public class HomeFragment extends Fragment implements OnMapReadyCallback, TaskLoadedCallback {
-
-    private HomeViewModel homeViewModel;
+public class DirectionsActivity extends AppCompatActivity implements OnMapReadyCallback, TaskLoadedCallback {
     private GoogleMap mMap;
-    MarkerOptions angelMarker;
-    Polyline polyline;
+    Location location;
+    private MarkerOptions myMarker, angelMarker;
+    private Polyline currentPolyline;
 
-    Context mContext;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_directions);
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                ViewModelProviders.of(this).get(HomeViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
-
-
-        SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
-                .findFragmentById(R.id.map);
+        MapFragment mapFragment = (MapFragment) getFragmentManager()
+                .findFragmentById(R.id.mMap);
         mapFragment.getMapAsync(this);
 
-        final TextView textView = root.findViewById(R.id.text_home);
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
 
 
 
-
-
-        return root;
     }
+
+
 
 
     @Override
@@ -84,7 +63,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, TaskLo
             // in a raw resource file.
             boolean success = googleMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
-                            getContext(), R.raw.style_json));
+                            DirectionsActivity.this, R.raw.style_json));
             mMap.setMyLocationEnabled(true);
 
 
@@ -95,13 +74,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, TaskLo
             Log.e(TAG, "Can't find style. Error: ", e);
         }
 
-
-
-
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) DirectionsActivity.this.getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
 
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(DirectionsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(DirectionsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -111,18 +88,24 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, TaskLo
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+        location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+
         if (location != null)
         {
 
-            LatLng latLng =  new LatLng(location.getLatitude(), location.getLongitude());
-
-
-           //mMap.addMarker(new MarkerOptions().position(latLng).title("My Location"));
-
-            LatLng angelMarkerPosition =new LatLng(-1.101873, 37.014238);
-            angelMarker = new MarkerOptions().position(angelMarkerPosition).title("Angel").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+            LatLng angelMarkerPosition =new LatLng(-1.320163, 36.704049);
+            angelMarker = new MarkerOptions()
+                    .position(angelMarkerPosition)
+                    .snippet("Grubbys")
+                    .title("Angel")
+                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_angel_marker));
             mMap.addMarker(angelMarker);
+
+            LatLng myMarkerPosition =  new LatLng(location.getLatitude(), location.getLongitude());
+            myMarker = new MarkerOptions().position(myMarkerPosition).title("Angel").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+            // mMap.addMarker(angelMarker);
+
+
 
 
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 9));
@@ -135,14 +118,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, TaskLo
                     .build();                   // Creates a CameraPosition from the builder
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-
-
-            String url = createUrl(latLng,angelMarkerPosition, "driving");
-            new FetchURL(mContext).execute(url,"driving");
-
+            new FetchURL(DirectionsActivity.this).execute(createUrl(myMarker.getPosition(), angelMarker.getPosition(), "driving"), "driving");
 
 
         }
+
+
     }
 
     private String createUrl(LatLng origin, LatLng destination, String directionMode){
@@ -159,8 +140,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, TaskLo
 
     @Override
     public void onTaskDone(Object... values) {
-
-
-        polyline = mMap.addPolyline((PolylineOptions) values[0]);
+        if (currentPolyline != null)
+            currentPolyline.remove();
+        currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
     }
 }

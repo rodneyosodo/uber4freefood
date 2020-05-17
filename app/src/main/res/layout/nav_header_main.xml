@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
-    android:background="@drawable/side_nav_bar"
+    android:background="@color/colorPrimary"
     android:gravity="bottom"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -15,7 +15,7 @@
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:id="@+id/imgView"
+        android:id="@+id/imgUserProfile"
         android:layout_marginBottom="20dp"
         android:clickable="true"
         android:src="@drawable/ic_local_see_black_24dp"
@@ -25,14 +25,15 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/txtUserName"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="John Doe"
+        android:text=""
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/txtUserEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/nav_header_subtitle" />
+        android:text="" />
 
 </LinearLayout>

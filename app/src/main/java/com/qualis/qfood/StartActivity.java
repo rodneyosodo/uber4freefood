@@ -8,7 +8,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.qualis.qfood.Common.Common;
+import com.qualis.qfood.Model.User;
+
 import life.sabujak.roundedbutton.RoundedButton;
+
+import static com.qualis.qfood.Common.Common.currentUser;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -25,10 +30,11 @@ public class StartActivity extends AppCompatActivity {
         txtSignUp = (TextView)findViewById(R.id.txtSignUp);
 
 
+
         txtSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentSignup = new Intent(StartActivity.this,Signup1Activity.class);
+                Intent intentSignup = new Intent(StartActivity.this, DirectionsActivity.class);
                 startActivity(intentSignup);
             }
         });
@@ -42,5 +48,13 @@ public class StartActivity extends AppCompatActivity {
 
             }
         });
+
+
+        if(currentUser != null ){
+            Intent mainActivity = new Intent(StartActivity.this, MainActivity.class);
+            mainActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(mainActivity);
+        }
+
     }
 }
