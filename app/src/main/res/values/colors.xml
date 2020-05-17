@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#444a58</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#ffffff</color>
+
+    <color name="colorStartButton">#f9ad1c</color>
+    <color name="colorTextInput">#000000</color>
+    <color name="colorAllButtons">#21232f</color>
+    <color name="colorMiscellaneous">#1fa0db</color>
+    <color name="startColor">#4b4956</color>
+    <color name="aleart"> #f36273</color>
+
+
+
+</resources>
