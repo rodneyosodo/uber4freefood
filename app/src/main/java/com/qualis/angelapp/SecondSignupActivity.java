@@ -162,6 +162,12 @@ public class SecondSignupActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         Toast.makeText(SecondSignupActivity.this, response.toString(), Toast.LENGTH_LONG).show();
 
+                        try {
+                            signUpCheck(response);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                     }
 
                 }, new Response.ErrorListener() {
