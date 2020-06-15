@@ -4,7 +4,8 @@
 ###### Running
 Clone files into go src directory
 run `docker-compose up`
- port `*:8080`
+
+###### port `*:8080`
 
 ###### Api Routes
 `GET    /food`
