@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type Food struct {
 	ID					uint	`json:"id" gorm:"primary_key"`
 	FoodName			string	`json:"foodName"`
@@ -12,6 +14,9 @@ type Food struct {
 	LocationLat			string	`json:"locationLat"`
 	LocationLong		string	`json:"locationLong"`
 	Status				string	`json:"status"`
+	CreatedAt			time.Time
+	UpdatedAt			time.Time
+	DeletedAt			*time.Time
 }
 type CreateFoodInput struct {
 	FoodName			string	`json:"foodName" binding:"required"`
