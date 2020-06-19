@@ -94,7 +94,7 @@ public class LogInActivity extends AppCompatActivity {
                 else{
                     progressDialog = new ProgressDialog(LogInActivity.this, R.style.ProgressDialogStyle);
                     progressDialog.setMessage("Please Wait..");
-                    progressDialog.setCancelable(false);
+                    progressDialog.setCancelable(true);
                     progressDialog.show();
 
                     Converter pwdConverter = new Converter();
@@ -122,7 +122,7 @@ public class LogInActivity extends AppCompatActivity {
     private void loginRequest(final String uname, final String pwd) throws JSONException {
 
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://2a80e91f.ngrok.io/api/user/login";
+        String URL = "https://ff089542abac.ngrok.io/api/user/login";
 
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("email", uname);
@@ -205,7 +205,7 @@ public class LogInActivity extends AppCompatActivity {
 
 
 
-            Toast.makeText(LogInActivity.this,  user.getPhonenumber(), Toast.LENGTH_LONG).show();
+            Toast.makeText(LogInActivity.this,  String.valueOf(user.getID()), Toast.LENGTH_LONG).show();
 
             String userType = user.getUsertype();
 

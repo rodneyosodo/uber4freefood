@@ -5,16 +5,43 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="@string/menu_home" />
+            android:id="@+id/nav_browse"
+            android:icon="@drawable/ic_browse_black_24dp"
+            android:title="@string/menu_browse" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_gallery" />
+            android:id="@+id/nav_active_food"
+            android:icon="@drawable/ic_active_black_24dp"
+            android:title="@string/menu_activefood" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_slideshow" />
+            android:id="@+id/nav_my_history"
+            android:icon="@drawable/ic_history_black_24dp"
+            android:title="@string/menu_myhistory" />
+
+
+    </group>
+
+
+    <view
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/colorDivider"
+        />
+    <group android:menuCategory="secondary">
+
+        <item
+            android:id="@+id/nav_account"
+            android:icon="@drawable/ic_account_circle_black_24dp"
+            android:title="@string/menu_account" />
+
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="@string/menu_settings" />
+        <item
+            android:id="@+id/nav_log_out"
+            android:icon="@drawable/ic_log_out_black_24dp"
+            android:title="@string/menu_logout" />
+
     </group>
 </menu>

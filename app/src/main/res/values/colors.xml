@@ -11,6 +11,8 @@
     <color name="startColor">#4b4956</color>
     <color name="aleart"> #f36273</color>
 
+    <color name="colorDivider">#000000</color>
+
 
 
 </resources>
