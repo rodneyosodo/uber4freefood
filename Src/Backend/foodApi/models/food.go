@@ -14,6 +14,8 @@ type Food struct {
 	LocationLat			string	`json:"locationLat"`
 	LocationLong		string	`json:"locationLong"`
 	Status				string	`json:"status"`
+	AngelUserID			string	`json:"angelUserID"`
+	humanUserID			string	`json:"humanUserID"`
 	CreatedAt			time.Time
 	UpdatedAt			time.Time
 	DeletedAt			*time.Time
