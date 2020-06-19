@@ -5,8 +5,8 @@ public class User {
     private long ID;
     private String email;
 
-    private String firstName;
-    private String lastName;
+    private String firstname;
+    private String lastname;
 
     private String phonenumber;
     private String profilepicname;
@@ -17,11 +17,11 @@ public class User {
     public User() {
     }
 
-    public User(long ID, String email, String firstName, String lastName, String phonenumber, String profilepicname, String token, String usertype) {
+    public User(long ID, String email, String firstname, String lastname, String phonenumber, String profilepicname, String token, String usertype) {
         this.ID = ID;
         this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.firstname = firstname;
+        this.lastname = lastname;
         this.phonenumber = phonenumber;
         this.profilepicname = profilepicname;
         this.token = token;
@@ -44,20 +44,20 @@ public class User {
         this.email = email;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     public String getPhonenumber() {
@@ -92,5 +92,7 @@ public class User {
         this.usertype = usertype;
     }
 }
+
+
 
 

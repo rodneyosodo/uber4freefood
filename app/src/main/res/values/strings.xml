@@ -22,4 +22,10 @@
     <string name="menu_slideshow">Slideshow</string>
 
     <string name="home_second">Home Second</string>
+    <string name="menu_account">My Account</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_logout">Log Out</string>
+    <string name="menu_activefood">Active Food</string>
+    <string name="menu_browse">Add Food</string>
+    <string name="menu_myhistory">History</string>
 </resources>
