@@ -30,6 +30,8 @@ type CreateFoodInput struct {
 	FoodImageId			string	`json:"foodImageId"`
 	LocationLat			string	`json:"locationLat" binding:"required"`
 	LocationLong		string	`json:"locationLong" binding:"required"`
+	AngelUserID			string	`json:"angelUserID"`
+	humanUserID			string	`json:"humanUserID"`
 	Status				string	`json:"status"`
 }
 type UpdateStatusInput struct {
