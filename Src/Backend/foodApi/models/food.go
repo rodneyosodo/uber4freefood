@@ -13,9 +13,9 @@ type Food struct {
 	FoodImageId			string	`json:"foodImageId"`
 	LocationLat			string	`json:"locationLat"`
 	LocationLong		string	`json:"locationLong"`
-	Status				string	`json:"status"`
 	AngelUserID			string	`json:"angelUserID"`
-	humanUserID			string	`json:"humanUserID"`
+	HumanUserID			string	`json:"humanUserID"`
+	Status				string	`json:"status"`
 	CreatedAt			time.Time
 	UpdatedAt			time.Time
 	DeletedAt			*time.Time
@@ -31,7 +31,7 @@ type CreateFoodInput struct {
 	LocationLat			string	`json:"locationLat" binding:"required"`
 	LocationLong		string	`json:"locationLong" binding:"required"`
 	AngelUserID			string	`json:"angelUserID"`
-	humanUserID			string	`json:"humanUserID"`
+	HumanUserID			string	`json:"humanUserID"`
 	Status				string	`json:"status"`
 }
 type UpdateStatusInput struct {
