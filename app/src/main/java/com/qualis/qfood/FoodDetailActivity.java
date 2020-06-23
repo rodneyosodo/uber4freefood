@@ -66,7 +66,7 @@ public class FoodDetailActivity extends AppCompatActivity {
                 "Non-Vegan",
                 "sddfdsfsdfs",
                 "sasadsad",
-                "Food well prepared in a clean kitchen. The food was served to guests on 6/6/2020 and has a shelf life of two days. Enjoyed best when warmed",
+                "Food well cooked in a clean kitchen. The food was served to guests on 6/6/2020 and has a shelf life of two days. Enjoyed best when warmed",
                 "Mushrooms, Soy sauce and lots of garlic",
                 "4",
                 "Has chillies. Not recommended for people with allergies",
