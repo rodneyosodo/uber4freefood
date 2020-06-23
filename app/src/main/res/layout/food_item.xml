@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
+    android:clickable="true"
+    android:focusable="true"
     card_view:cardCornerRadius="9dp"
     app:cardElevation="10dp"
     app:cardCornerRadius="10dp">

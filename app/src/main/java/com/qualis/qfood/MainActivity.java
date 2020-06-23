@@ -16,8 +16,20 @@ import android.view.View;
 import android.view.Menu;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,6 +49,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.JsonObject;
 import com.qualis.qfood.Adapters.FoodItemAdapter;
 import com.qualis.qfood.Common.Common;
 import com.qualis.qfood.MapRoutesHelper.FetchURL;
@@ -55,8 +68,15 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -173,42 +193,88 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         layoutManager = new LinearLayoutManager(this);
         recyclerFoodItems.setLayoutManager(layoutManager);
 
-        //static data
-        foodList.add(
-                new Food("2343", "Rice Rice, Beans veg",
-                        "Non-Vegan",
-                        "sddfdsfsdfs",
-                        "sasadsad",
-                        "asdsda",
-                        "sddfdsfsdfs",
-                        "Kibandi",
-                        "sddfdsfsdfs",
-                        "sasadsad",
-                        "sddfdsfsdfs",
-                        "sasadsad",
-                        "sddfdsfsdfs",
-                        "sasadsad"
-                )
-        );
 
-        foodList.add(
-                new Food("2343", "Rice Veg Chapo 2",
-                        "Non-Vegan",
-                        "sddfdsfsdfs",
-                        "sasadsad",
-                        "asdsda",
-                        "sddfdsfsdfs",
-                        "4",
-                        "sddfdsfsdfs",
-                        "sasadsad",
-                        "sddfdsfsdfs",
-                        "sasadsad",
-                        "sddfdsfsdfs",
-                        "sasadsad"
-                )
-        );
+        // connection to db
+        try {
+            getFoodData();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Toast.makeText(MainActivity.this, String.valueOf(foodList),Toast.LENGTH_SHORT).show();
+
+
+
         adapter = new FoodItemAdapter(this, foodList);
         recyclerFoodItems.setAdapter(adapter);
+
+    }
+
+    private void getFoodData() throws IOException{
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        String URL = "https://e4e7a0533d9f.ngrok.io/food";
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
+                Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                JSONArray foodListResponse = null;
+                try {
+                    foodListResponse = response.getJSONArray("data");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                for(int i = 0; i < foodListResponse.length(); i++) {
+                    try {
+                        JSONObject foodObject = foodListResponse.getJSONObject(i);
+
+                        //Map json object to FoodClass
+                        ObjectMapper mapper = new ObjectMapper();
+                        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+                        Food foodItem = mapper.readValue(foodObject.toString(), Food.class);
+
+                        foodList.add(foodItem);
+
+
+                    } catch (JsonParseException e) {
+                        e.printStackTrace();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+
+                    } catch (JsonMappingException e) {
+                        e.printStackTrace();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+
+            //Request headers
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                return headers;
+            }
+
+        };
+        requestQueue.add(jsonObjReq);
+
+
 
     }
 

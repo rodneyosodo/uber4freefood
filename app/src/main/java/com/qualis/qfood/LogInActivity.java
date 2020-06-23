@@ -122,7 +122,7 @@ public class LogInActivity extends AppCompatActivity {
     private void loginRequest(final String uname, final String pwd) throws JSONException {
 
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://ff089542abac.ngrok.io/api/user/login";
+        String URL = "https://531b2bd6364b.ngrok.io/api/user/login";
 
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("email", uname);
