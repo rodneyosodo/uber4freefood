@@ -78,8 +78,9 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this,"Password cannot be less that 8 characters",Toast.LENGTH_LONG).show();
                 }
                 else{
-                    progressDialog = new ProgressDialog(LoginActivity.this);
+                    progressDialog = new ProgressDialog(LoginActivity.this, R.style.ProgressDialogStyle);
                     progressDialog.setMessage("Please Wait..");
+                    progressDialog.setCancelable(true);
                     progressDialog.show();
 
                     Converter pwdConverter = new Converter();
@@ -107,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
     private void loginRequest(final String uname, final String pwd) throws JSONException {
 
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://74c72ed8ab17.ngrok.io/api/user/login";
+        String URL = "https://531b2bd6364b.ngrok.io/api/user/login";
 
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("email", uname);

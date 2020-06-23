@@ -26,7 +26,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.qualis.angelapp.Common.Common;
 import com.qualis.angelapp.Model.User;
 import com.qualis.angelapp.Tools.Converter;
@@ -34,7 +33,6 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -47,26 +45,28 @@ import java.util.Map;
 
 import life.sabujak.roundedbutton.RoundedButton;
 
-public class SecondSignupActivity extends AppCompatActivity {
+public class AddFood2Activity extends AppCompatActivity {
 
     StorageReference firebaseStorageReference = FirebaseStorage.getInstance().getReference();
 
     ImageView arrowBack;
-    RoundedButton btnSignup2;
-    com.rengwuxian.materialedittext.MaterialEditText edtEmail, edtPhone, edtPasswordReg;
+    RoundedButton btnAddFood2;
+    com.rengwuxian.materialedittext.MaterialEditText edtFoodDescription, edtSpecialIngredients, edtFoodServing, edtSpecialNote;
     ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_second_signup);
+        setContentView(R.layout.activity_add_food2);
 
 
-        edtEmail = (MaterialEditText)findViewById(R.id.edtEmail);
-        edtPhone = (MaterialEditText)findViewById(R.id.edtPhone);
-        edtPasswordReg = (MaterialEditText)findViewById(R.id.edtPasswordReg);
+        edtFoodDescription = (MaterialEditText)findViewById(R.id.edtFoodDescription);
+        edtSpecialIngredients = (MaterialEditText)findViewById(R.id.edtSpecialIngredients);
+        edtFoodServing = (MaterialEditText)findViewById(R.id.edtFoodServing);
+        edtSpecialNote = (MaterialEditText)findViewById(R.id.edtSpecialNote);
+
         arrowBack = (ImageView)findViewById(R.id.arrowBack);
-        btnSignup2 = (RoundedButton)findViewById(R.id.btnSignup2);
+        btnAddFood2 = (RoundedButton)findViewById(R.id.btnAddFood2);
 
 
         HashMap<String, String> mapSecondPage = new HashMap();
@@ -82,61 +82,50 @@ public class SecondSignupActivity extends AppCompatActivity {
 
         final HashMap<String, String> finalMapSecondPage = mapSecondPage;
 
-        btnSignup2.setOnClickListener(new View.OnClickListener() {
+        btnAddFood2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = edtEmail.getText().toString().trim();
-                String phoneNumber = edtPhone.getText().toString().trim();
-                String password = edtPasswordReg.getText().toString();
+                String foodDescription = edtFoodDescription.getText().toString();
+                String specialIngredients = edtSpecialIngredients.getText().toString();
+                String foodServing = edtFoodServing.getText().toString().trim();
+                String specialNote = edtSpecialNote.getText().toString();
 
 
-                if (TextUtils.isEmpty(email) || TextUtils.isEmpty(phoneNumber) || TextUtils.isEmpty(password)){
-                    Toast.makeText(SecondSignupActivity.this,"Kindly fill all details to proceed",Toast.LENGTH_LONG).show();
-                }
-                else  if(TextUtils.getTrimmedLength(password) < 8) {
-                    Toast.makeText(SecondSignupActivity.this,"Password must be greater than 8 characters",Toast.LENGTH_LONG).show();
+                if (TextUtils.isEmpty(foodDescription) || TextUtils.isEmpty(specialIngredients) || TextUtils.isEmpty(foodServing) || TextUtils.isEmpty(specialNote)){
+                    Toast.makeText(AddFood2Activity.this,"Kindly fill all details to proceed",Toast.LENGTH_LONG).show();
 
                 }
                 else{
-                    progressDialog = new ProgressDialog(SecondSignupActivity.this, R.style.ProgressDialogStyle);
-                    progressDialog.setMessage("Please Wait..");
-                    progressDialog.setCancelable(true);
-                    progressDialog.show();
-
-                    Converter pwdRegConvert = new Converter();
-                    try {
-                        password = pwdRegConvert.SHA1(password);
-                    } catch (NoSuchAlgorithmException e) {
-                        e.printStackTrace();
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
 
                     SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
                     String currentDateTime = dateTimeFormat.format(new Date());
 
-                    final String profilePicName = finalMapSecondPage.get("FirstName") + finalMapSecondPage.get("FirstName") + currentDateTime;
+                    final String foodImageid = finalMapSecondPage.get("FoodName") + currentDateTime;
 
 
 
-                    StorageReference profilePicRef = firebaseStorageReference.child("ProfilePictures").child(profilePicName);
+                    StorageReference profilePicRef = firebaseStorageReference.child("FoodImages").child(foodImageid);
                     UploadTask uploadTask = profilePicRef.putBytes(byteArray);
 
-                    finalMapSecondPage.put("email", email);
-                    finalMapSecondPage.put("phonenumber", phoneNumber);
-                    finalMapSecondPage.put("password",password);
-                    finalMapSecondPage.put("profilepicname", profilePicName);
-                    finalMapSecondPage.put("usertype", "angel");
+                    finalMapSecondPage.put("Description", foodDescription);
+                    finalMapSecondPage.put("SpecialIngredients", specialIngredients);
+                    finalMapSecondPage.put("FoodServing",foodServing);
+                    finalMapSecondPage.put("FoodImageId", foodImageid);
+                    finalMapSecondPage.put("SpecialNote", specialNote);
+                    finalMapSecondPage.put("locationLat", "-1.320163");
+                    finalMapSecondPage.put("locationLong", "36.704049");
+                    finalMapSecondPage.put("status", "Inactive");
+
 
                     uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                            Toast.makeText(SecondSignupActivity.this, profilePicName,Toast.LENGTH_LONG).show();
+                            Toast.makeText(AddFood2Activity.this, foodImageid,Toast.LENGTH_LONG).show();
                         }
                     });
 
                     try {
-                        signUpRequest(finalMapSecondPage);
+                        addFoodRequest(finalMapSecondPage);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -151,10 +140,10 @@ public class SecondSignupActivity extends AppCompatActivity {
         });
     }
 
-    private void signUpRequest(final Map data) throws JSONException {
+    private void addFoodRequest(final Map data) throws JSONException {
 
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://f29c264d.ngrok.io/api/user/new";
+        String URL = "https://e4e7a0533d9f.ngrok.io/food";
 
         Gson gson = new Gson();
         String json = gson.toJson(data);
@@ -165,10 +154,9 @@ public class SecondSignupActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Toast.makeText(SecondSignupActivity.this, response.toString(), Toast.LENGTH_LONG).show();
-
+                        Toast.makeText(AddFood2Activity.this, response.toString(), Toast.LENGTH_LONG).show();
                         try {
-                            signUpCheck(response);
+                            addFoodCheck(response);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -196,7 +184,7 @@ public class SecondSignupActivity extends AppCompatActivity {
         requestQueue.add(jsonObjReq);
 
     }
-    private void signUpCheck( JSONObject response) throws IOException {
+    private void addFoodCheck( JSONObject response) throws IOException {
 
         String message = null;
         try {
@@ -213,37 +201,20 @@ public class SecondSignupActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        if(message.equals("Account has been created") && status == true){
-
-            JSONObject account = null;
-
-            try {
-                account = response.getJSONObject("account");
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+        if(message.equals("Food has been created") && status == true){
 
 
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-            User user = mapper.readValue(account.toString(), User.class);
-
-            Common.currentUser = user;
-
-            Intent mainActivity = new Intent(SecondSignupActivity.this, MainActivity.class);
-            mainActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            Intent mainActivity = new Intent(AddFood2Activity.this, MainActivity.class);
+            mainActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(mainActivity);
 
 
 
 
         }else {
-            Toast.makeText(SecondSignupActivity.this, message, Toast.LENGTH_LONG).show();
+            Toast.makeText(AddFood2Activity.this, message, Toast.LENGTH_LONG).show();
         }
 
     }
-
-
 }
