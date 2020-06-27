@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.widget.LinearLayout;
@@ -48,9 +49,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.qualis.qfood.Adapters.FoodItemAdapter;
 import com.qualis.qfood.Common.Common;
+import com.qualis.qfood.Interface.ItemClickListener;
 import com.qualis.qfood.MapRoutesHelper.FetchURL;
 import com.qualis.qfood.MapRoutesHelper.TaskLoadedCallback;
 import com.qualis.qfood.Model.Food;
+import com.qualis.qfood.ViewHolder.FoodViewHolder;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -199,6 +202,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
+
+
     }
 
     private void getFoodData() throws IOException{
@@ -227,9 +232,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                         Food foodItem = mapper.readValue(foodObject.toString(), Food.class);
 
-                        foodItem.setFoodId(foodObject.getInt("id"));
+                        foodItem.setID(foodObject.getInt("id"));
 
-                        foodList.add(foodItem);
+                        String humanID = "" + foodItem.getHumanUserID();
+                        String foodStatus = "" + foodItem.getStatus();
+
+                        if (humanID.equalsIgnoreCase(String.valueOf(Common.currentUser.getId())) && (foodStatus.equalsIgnoreCase("active"))){
+                            foodList.clear();
+                            foodList.add(foodItem);
+                            break;
+                        }else{
+                            foodList.add(foodItem);
+                        }
 
 
                     } catch (JsonParseException e) {
@@ -249,7 +263,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 adapter = new FoodItemAdapter(MainActivity.this, foodList);
                 recyclerFoodItems.setAdapter(adapter);
 
+
                 Toast.makeText(MainActivity.this, foodList.get(0).getFoodName(),Toast.LENGTH_LONG).show();
+
+
+
+
+
             }
 
         }, new Response.ErrorListener() {
@@ -322,17 +342,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.nav_my_history) {
 
+            Intent myHistory = new Intent (MainActivity.this, MyHistoryActivity.class);
+            startActivity(myHistory);
+
 
         } else if (id == R.id.nav_account) {
 
         } else if (id == R.id.nav_settings) {
+
+
+        } else if (id == R.id.nav_log_out) {
             // Log out
             Intent signIn = new Intent (MainActivity.this, LogInActivity.class);
             signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(signIn);
-
-        } else if (id == R.id.nav_log_out) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -22,7 +22,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FoodDetailActivity"></activity>
+        <activity android:name=".MyHistoryActivity"></activity>
+        <activity android:name=".FoodDetailActivity" />
         <activity android:name=".DirectionsActivity" />
         <activity
             android:name=".MainActivity"
