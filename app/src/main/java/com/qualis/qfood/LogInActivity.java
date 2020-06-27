@@ -122,7 +122,7 @@ public class LogInActivity extends AppCompatActivity {
     private void loginRequest(final String uname, final String pwd) throws JSONException {
 
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://531b2bd6364b.ngrok.io/api/user/login";
+        String URL = "https://b90bcbd1db3b.ngrok.io/api/user/login";
 
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("email", uname);
@@ -202,10 +202,14 @@ public class LogInActivity extends AppCompatActivity {
 
             User user = mapper.readValue(account.toString(), User.class);
 
+            try {
+                user.setId(account.getInt("ID"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
 
-
-            Toast.makeText(LogInActivity.this,  String.valueOf(user.getID()), Toast.LENGTH_LONG).show();
+            Toast.makeText(LogInActivity.this, String.valueOf(user.getId()), Toast.LENGTH_LONG).show();
 
             String userType = user.getUsertype();
 

@@ -30,13 +30,10 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -49,13 +46,11 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.gson.JsonObject;
 import com.qualis.qfood.Adapters.FoodItemAdapter;
 import com.qualis.qfood.Common.Common;
 import com.qualis.qfood.MapRoutesHelper.FetchURL;
 import com.qualis.qfood.MapRoutesHelper.TaskLoadedCallback;
 import com.qualis.qfood.Model.Food;
-import com.qualis.qfood.Model.User;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -200,19 +195,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Toast.makeText(MainActivity.this, String.valueOf(foodList),Toast.LENGTH_SHORT).show();
 
 
 
-        adapter = new FoodItemAdapter(this, foodList);
-        recyclerFoodItems.setAdapter(adapter);
 
     }
 
     private void getFoodData() throws IOException{
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://e4e7a0533d9f.ngrok.io/food";
+        String URL = "https://02bce1164642.ngrok.io/food";
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
@@ -232,8 +224,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         //Map json object to FoodClass
                         ObjectMapper mapper = new ObjectMapper();
-                        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+                        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                         Food foodItem = mapper.readValue(foodObject.toString(), Food.class);
+
+                        foodItem.setFoodId(foodObject.getInt("id"));
 
                         foodList.add(foodItem);
 
@@ -252,6 +246,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 }
 
+                adapter = new FoodItemAdapter(MainActivity.this, foodList);
+                recyclerFoodItems.setAdapter(adapter);
+
+                Toast.makeText(MainActivity.this, foodList.get(0).getFoodName(),Toast.LENGTH_LONG).show();
             }
 
         }, new Response.ErrorListener() {

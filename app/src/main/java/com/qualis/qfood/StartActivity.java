@@ -34,7 +34,7 @@ public class StartActivity extends AppCompatActivity {
         txtSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentSignup = new Intent(StartActivity.this, DirectionsActivity.class);
+                Intent intentSignup = new Intent(StartActivity.this, MainActivity.class);
                 startActivity(intentSignup);
             }
         });

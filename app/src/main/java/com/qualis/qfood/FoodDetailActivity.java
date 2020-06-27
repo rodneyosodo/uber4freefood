@@ -62,7 +62,7 @@ public class FoodDetailActivity extends AppCompatActivity {
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppbar);
 
 
-        currentFood = new Food("2343", "Rice and Beef stew",
+        currentFood = new Food(8, "Rice and Beef stew",
                 "Non-Vegan",
                 "sddfdsfsdfs",
                 "sasadsad",

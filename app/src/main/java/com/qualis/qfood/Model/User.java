@@ -28,11 +28,12 @@ public class User {
         this.usertype = usertype;
     }
 
-    public long getID() {
+
+    public long getId() {
         return ID;
     }
 
-    public void setID(long ID) {
+    public void setId(long ID) {
         this.ID = ID;
     }
 
