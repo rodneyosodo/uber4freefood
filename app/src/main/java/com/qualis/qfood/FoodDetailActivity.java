@@ -191,7 +191,7 @@ public class FoodDetailActivity extends AppCompatActivity {
     private void checkActiveFood() throws IOException {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://02bce1164642.ngrok.io/food";
+        String URL = "https://d464d72f89df.ngrok.io/food";
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
@@ -205,6 +205,8 @@ public class FoodDetailActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+                Boolean boolActiveFood = false;
+                Food tempFood;
                 for(int i = 0; i < foodListResponse.length(); i++) {
                     try {
                         JSONObject foodObject = foodListResponse.getJSONObject(i);
@@ -223,17 +225,22 @@ public class FoodDetailActivity extends AppCompatActivity {
 
                         if(humanID.equalsIgnoreCase(String.valueOf(currentUser.getId())) && (foodStatus.equalsIgnoreCase("active"))){
                             Toast.makeText(FoodDetailActivity.this, "You already have an active food", Toast.LENGTH_LONG).show();
+                            boolActiveFood = true;
                             break;
-
-                        }else{
-                            addFood(stringfoodId);
-
                         }
 
 
                     } catch (JSONException | IOException e) {
                         e.printStackTrace();
 
+                    }
+                }
+
+                if(!boolActiveFood){
+                    try {
+                        addFood(stringfoodId);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
 
@@ -266,7 +273,7 @@ public class FoodDetailActivity extends AppCompatActivity {
     private void addFood(String stringfoodId) throws JSONException {
 
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://02bce1164642.ngrok.io/food/" + stringfoodId;
+        String URL = "https://d464d72f89df.ngrok.io/food/" + stringfoodId;
 
         String updatedAt = new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
 

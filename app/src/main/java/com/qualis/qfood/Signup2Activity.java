@@ -164,7 +164,7 @@ public class Signup2Activity extends AppCompatActivity {
     private void signUpRequest(final Map data) throws JSONException {
 
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://2a80e91f.ngrok.io/api/user/new";
+        String URL = "https://bcd75b5568a3.ngrok.io/api/user/new";
 
         Gson gson = new Gson();
         String json = gson.toJson(data);

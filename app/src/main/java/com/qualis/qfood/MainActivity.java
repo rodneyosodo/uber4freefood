@@ -1,13 +1,16 @@
 package com.qualis.qfood;
 
 import android.Manifest;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,6 +34,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -43,23 +51,33 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.location.LocationListener;
+
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.qualis.qfood.Adapters.FoodItemAdapter;
 import com.qualis.qfood.Common.Common;
-import com.qualis.qfood.Interface.ItemClickListener;
 import com.qualis.qfood.MapRoutesHelper.FetchURL;
 import com.qualis.qfood.MapRoutesHelper.TaskLoadedCallback;
 import com.qualis.qfood.Model.Food;
-import com.qualis.qfood.ViewHolder.FoodViewHolder;
+import com.qualis.qfood.Model.User;
+import com.qualis.qfood.Service.UserLocationService;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -75,7 +93,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -100,21 +117,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private BottomSheetBehavior sheetBehavior;
     private LinearLayout bottom_sheet;
 
+
     private GoogleMap mMap;
-    Location location;
+    MapFragment mapFragment;
+
+
+    static MainActivity instance;
+
+    public static MainActivity getInstance() {
+        return instance;
+    }
+
+
+    LocationRequest locationRequest;
+    FusedLocationProviderClient fusedLocationProviderClient;
+
+
     private MarkerOptions angelMarker;
     private Polyline currentPolyline;
-    LatLng angelMarkerPosition =new LatLng(-1.320163, 36.704049);
+
+    LatLng angelMarkerPosition, myMarkerPosition;
+    Location userCurrentLocation;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        instance = this;
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Home");
         setSupportActionBar(toolbar);
-
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -127,20 +162,48 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         View headerview = navigationView.getHeaderView(0);
 
+        FirebaseApp.initializeApp(this);
+        storage = FirebaseStorage.getInstance();
+
+
+        angelMarkerPosition = new LatLng(-1.3204, 36.7041);
+
+        Dexter.withActivity(this)
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        updateUserLocation();
+
+
+
+
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        Toast.makeText(MainActivity.this, "Location services are required to acces functionality", Toast.LENGTH_LONG).show();
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+
+                    }
+                }).check();
+
+
         String profile = Common.currentUser.getProfilepicname();
 
-        imgUserProfile = (CircleImageView)headerview.findViewById(R.id.imgUserProfile);
-        txtUserEmail = (TextView)headerview.findViewById(R.id.txtUserEmail);
-        txtUserName = (TextView)headerview.findViewById(R.id.txtUserName);
+        imgUserProfile = (CircleImageView) headerview.findViewById(R.id.imgUserProfile);
+        txtUserEmail = (TextView) headerview.findViewById(R.id.txtUserEmail);
+        txtUserName = (TextView) headerview.findViewById(R.id.txtUserName);
 
         String name = Common.currentUser.getFirstname() + " " + Common.currentUser.getLastname();
-        String  mail = Common.currentUser.getEmail();
+        String mail = Common.currentUser.getEmail();
 
         txtUserName.setText(name);
         txtUserEmail.setText(mail);
-
-        storage = FirebaseStorage.getInstance();
-
 
 
         storageReference = storage.getReference("ProfilePictures/").child(profile);
@@ -177,20 +240,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
 
-        //Google maps
-        MapFragment mapFragment = (MapFragment) getFragmentManager()
-                .findFragmentById(R.id.mMap);
-        mapFragment.getMapAsync(this);
-
-
         //Recycler
         foodList = new ArrayList<>();
 
-        recyclerFoodItems = (RecyclerView)findViewById(R.id.recycler_food_items);
+        recyclerFoodItems = (RecyclerView) findViewById(R.id.recycler_food_items);
         recyclerFoodItems.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerFoodItems.setLayoutManager(layoutManager);
 
+
+        //Google maps
+        mapFragment = (MapFragment) getFragmentManager()
+                .findFragmentById(R.id.mMap);
+        mapFragment.getMapAsync(MainActivity.this);
 
         // connection to db
         try {
@@ -200,16 +262,94 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
 
+    }
 
+    private void updateUserLocation() {
+        buildLocationRequest();
 
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
+            return;
+        }
+
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, getPendingIntent());
+    }
+
+    private PendingIntent getPendingIntent() {
+        Intent intent = new Intent(this, UserLocationService.class);
+        intent.setAction(UserLocationService.ACTION_PROCESS_UPDATE);
+
+        return PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private void buildLocationRequest() {
+        locationRequest = new LocationRequest();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(3000);
+        locationRequest.setSmallestDisplacement(10f);
 
     }
 
-    private void getFoodData() throws IOException{
+    public void updateMapsUserLocation(final Location userlocation) {
+        userCurrentLocation = userlocation;
+
+        angelMarker = new MarkerOptions()
+                .position(angelMarkerPosition)
+                .snippet("Grubbys")
+                .title("Angel");
+        mMap.addMarker(angelMarker);
+
+
+
+
+        if (userCurrentLocation != null)
+        {
+            myMarkerPosition =  new LatLng(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude());
+
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myMarkerPosition, 17));
+
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(myMarkerPosition)      // Sets the center of the map to location user
+                    .zoom(17)                   // Sets the zoom
+                    .bearing(0)                // Sets the orientation of the camera to north
+                    .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                    .build();                   // Creates a CameraPosition from the builder
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+            new FetchURL(MainActivity.this).execute(createUrl(myMarkerPosition, angelMarker.getPosition(), "driving"), "driving");
+
+
+
+
+            Toast.makeText(MainActivity.this,myMarkerPosition.toString(),Toast.LENGTH_LONG).show();
+
+        }
+
+        MainActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+
+
+
+
+            }
+        });
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        //When BACK BUTTON is pressed, the activity on the stack is restarted
+        //Do what you want on the refresh procedure here
+    }
+
+    private void getFoodData() throws IOException {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://02bce1164642.ngrok.io/food";
+        String URL = "https://d464d72f89df.ngrok.io/food";
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
@@ -223,7 +363,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     e.printStackTrace();
                 }
 
-                for(int i = 0; i < foodListResponse.length(); i++) {
+                for (int i = 0; i < foodListResponse.length(); i++) {
                     try {
                         JSONObject foodObject = foodListResponse.getJSONObject(i);
 
@@ -237,11 +377,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         String humanID = "" + foodItem.getHumanUserID();
                         String foodStatus = "" + foodItem.getStatus();
 
-                        if (humanID.equalsIgnoreCase(String.valueOf(Common.currentUser.getId())) && (foodStatus.equalsIgnoreCase("active"))){
+                        //  double withinRadius = getDistanceBetweenUserLocationandFoodLocation();
+                        ///check thus code
+                        if (humanID.equalsIgnoreCase(String.valueOf(Common.currentUser.getId())) && (foodStatus.equalsIgnoreCase("active"))) {
                             foodList.clear();
                             foodList.add(foodItem);
+                            Float foodLat = Float.valueOf(foodList.get(0).getLocationLat());
+                            Float foodLong = Float.valueOf(foodList.get(0).getLocationLong());
+
+
                             break;
-                        }else{
+
+                        } else {
                             foodList.add(foodItem);
                         }
 
@@ -262,12 +409,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 adapter = new FoodItemAdapter(MainActivity.this, foodList);
                 recyclerFoodItems.setAdapter(adapter);
-
-
-                Toast.makeText(MainActivity.this, foodList.get(0).getFoodName(),Toast.LENGTH_LONG).show();
-
-
-
 
 
             }
@@ -291,7 +432,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         };
         requestQueue.add(jsonObjReq);
-
 
 
     }
@@ -338,11 +478,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.nav_browse) {
 
-        }  else if (id == R.id.nav_active_food) {
+        } else if (id == R.id.nav_active_food) {
 
         } else if (id == R.id.nav_my_history) {
 
-            Intent myHistory = new Intent (MainActivity.this, MyHistoryActivity.class);
+            Intent myHistory = new Intent(MainActivity.this, MyHistoryActivity.class);
             startActivity(myHistory);
 
 
@@ -353,7 +493,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.nav_log_out) {
             // Log out
-            Intent signIn = new Intent (MainActivity.this, LogInActivity.class);
+            Intent signIn = new Intent(MainActivity.this, LogInActivity.class);
             signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(signIn);
         }
@@ -372,6 +512,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
         try {
             // Customise the styling of the base map using a JSON object defined
             // in a raw resource file.
@@ -379,17 +520,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             boolean success = googleMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
                             MainActivity.this, R.raw.style_json));
+
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
+
                 return;
             }
             mMap.setMyLocationEnabled(true);
+
+
+
 
 
             if (!success) {
@@ -399,49 +538,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Log.e(TAG, "Can't find style. Error: ", e);
         }
 
-        LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-
-        location = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, false)));
-
-
-        angelMarker = new MarkerOptions()
-                .position(angelMarkerPosition)
-                .snippet("Grubbys")
-                .title("Angel");
-        mMap.addMarker(angelMarker);
-        if (location != null)
-        {
-
-
-            LatLng myMarkerPosition =  new LatLng(location.getLatitude(), location.getLongitude());
-
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myMarkerPosition, 9));
-
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(myMarkerPosition)      // Sets the center of the map to location user
-                    .zoom(9)                   // Sets the zoom
-                    .bearing(0)                // Sets the orientation of the camera to north
-                    .tilt(40)                   // Sets the tilt of the camera to 30 degrees
-                    .build();                   // Creates a CameraPosition from the builder
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-            new FetchURL(MainActivity.this).execute(createUrl(myMarkerPosition, angelMarker.getPosition(), "driving"), "driving");
-
-
-        }
-
 
     }
 
-    private String createUrl(LatLng origin, LatLng destination, String directionMode){
+    private String createUrl(LatLng origin, LatLng destination, String directionMode) {
         String strOrigin = "origin=" + origin.latitude + "," + origin.longitude;
         String strDestination = "destination=" + destination.latitude + "," + destination.longitude;
 
         String strMode = "mode=" + directionMode;
-        String params = strOrigin + "&" + strDestination +"&" + strMode;
+        String params = strOrigin + "&" + strDestination + "&" + strMode;
 
-        String createdUrl = "https://maps.googleapis.com/maps/api/directions/json?" + params + "&key=AIzaSyBBp4gJ4sa_NW0SpmfffmZlFHPAyoEDYys";
+        String createdUrl = "https://maps.googleapis.com/maps/api/directions/json?" + params + "&key=AIzaSyC1mqv3W0bo4YaKfOgCyQOYXX76r1Ji8EA";
 
         return createdUrl;
     }
@@ -452,6 +559,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             currentPolyline.remove();
         currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
     }
-}
 
+
+
+
+
+
+
+
+
+
+
+}
 

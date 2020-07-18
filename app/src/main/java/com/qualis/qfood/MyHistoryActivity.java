@@ -71,7 +71,7 @@ public class MyHistoryActivity extends AppCompatActivity {
     private void getFoodData() throws IOException {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://02bce1164642.ngrok.io/food";
+        String URL = "https://d464d72f89df.ngrok.io/food";
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
