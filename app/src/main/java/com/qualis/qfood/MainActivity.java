@@ -43,6 +43,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -95,6 +96,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import life.sabujak.roundedbutton.RoundedButton;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
@@ -104,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     CircleImageView imgUserProfile;
     TextView txtUserEmail, txtUserName;
 
+    RoundedButton btnCancelFood;
     FirebaseStorage storage;
     StorageReference storageReference;
 
@@ -133,10 +136,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FusedLocationProviderClient fusedLocationProviderClient;
 
 
-    private MarkerOptions angelMarker;
+    MarkerOptions angelMarker;
     private Polyline currentPolyline;
 
-    LatLng angelMarkerPosition, myMarkerPosition;
+    LatLng foodPosition, myMarkerPosition;
     Location userCurrentLocation;
 
 
@@ -162,11 +165,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         View headerview = navigationView.getHeaderView(0);
 
+        btnCancelFood = (RoundedButton)findViewById(R.id.btnCancelFood);
+
         FirebaseApp.initializeApp(this);
         storage = FirebaseStorage.getInstance();
 
 
-        angelMarkerPosition = new LatLng(-1.3204, 36.7041);
+
 
         Dexter.withActivity(this)
                 .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -262,6 +267,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
 
+        btnCancelFood.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                canelFoodReservation(Common.currentlyActiveFood);
+            }
+        });
+
+
+
+    }
+
+    private void canelFoodReservation(Food currentlyActiveFood) {
+
+        RequestQueue cancelFoodRequestQueue = Volley.newRequestQueue(this);
+        String cancelFoodRequestURL;
+
     }
 
     private void updateUserLocation() {
@@ -295,11 +316,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void updateMapsUserLocation(final Location userlocation) {
         userCurrentLocation = userlocation;
 
-        angelMarker = new MarkerOptions()
-                .position(angelMarkerPosition)
-                .snippet("Grubbys")
-                .title("Angel");
-        mMap.addMarker(angelMarker);
 
 
 
@@ -308,22 +324,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {
             myMarkerPosition =  new LatLng(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude());
 
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myMarkerPosition, 17));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myMarkerPosition, 9));
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(myMarkerPosition)      // Sets the center of the map to location user
-                    .zoom(17)                   // Sets the zoom
+                    .zoom(14)                   // Sets the zoom
                     .bearing(0)                // Sets the orientation of the camera to north
                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
+
             new FetchURL(MainActivity.this).execute(createUrl(myMarkerPosition, angelMarker.getPosition(), "driving"), "driving");
 
 
-
-
-            Toast.makeText(MainActivity.this,myMarkerPosition.toString(),Toast.LENGTH_LONG).show();
 
         }
 
@@ -349,7 +363,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void getFoodData() throws IOException {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://d464d72f89df.ngrok.io/food";
+        String URL = "https://8072162f711f.ngrok.io/food";
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
@@ -359,6 +373,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 JSONArray foodListResponse = null;
                 try {
                     foodListResponse = response.getJSONArray("data");
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -377,20 +392,55 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         String humanID = "" + foodItem.getHumanUserID();
                         String foodStatus = "" + foodItem.getStatus();
 
-                        //  double withinRadius = getDistanceBetweenUserLocationandFoodLocation();
-                        ///check thus code
-                        if (humanID.equalsIgnoreCase(String.valueOf(Common.currentUser.getId())) && (foodStatus.equalsIgnoreCase("active"))) {
-                            foodList.clear();
-                            foodList.add(foodItem);
-                            Float foodLat = Float.valueOf(foodList.get(0).getLocationLat());
-                            Float foodLong = Float.valueOf(foodList.get(0).getLocationLong());
+                        double foodLat = Double.parseDouble(foodItem.getLocationLat());
+                        double foodLong = Double.parseDouble(foodItem.getLocationLong());
+
+                        double withinRadius = getDistance(foodLat, userCurrentLocation.getLatitude(),
+                                foodLong, userCurrentLocation.getLongitude(),0.0,0.0);
+
+                        if(withinRadius <= 7000){
+
+                            if (humanID.equalsIgnoreCase(String.valueOf(Common.currentUser.getId())) && (foodStatus.equalsIgnoreCase("active"))) {
+                                foodList.clear();
+                                foodList.add(foodItem);
+                                btnCancelFood.setVisibility(View.VISIBLE);
+                                foodPosition = new LatLng(foodLat,foodLong);
+
+                                final LatLng angelMarkerPosition = foodPosition;
+
+                                MainActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if(angelMarkerPosition != null){
+
+                                            angelMarker = new MarkerOptions()
+                                                    .position(angelMarkerPosition)
+                                                    .snippet("Grubbys")
+                                                    .title("Angel")
+                                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.food_icon));
+                                            mMap.addMarker(angelMarker);
+
+                                            new FetchURL(MainActivity.this).execute(createUrl(myMarkerPosition, angelMarker.getPosition(), "driving"), "driving");
 
 
-                            break;
+                                        }
+                                    }
+                                });
 
-                        } else {
-                            foodList.add(foodItem);
+
+
+
+                                break;
+
+                            } else {
+                                btnCancelFood.setVisibility(View.INVISIBLE);
+                                foodList.add(foodItem);
+
+                            }
+
                         }
+
+
 
 
                     } catch (JsonParseException e) {
@@ -530,7 +580,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-
             if (!success) {
                 Log.e(TAG, "Style parsing failed.");
             }
@@ -561,7 +610,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+    public static double getDistance(double lat1, double lat2, double lon1,
+                                  double lon2, double el1, double el2) {
 
+        final int R = 6371; // Radius of the earth
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+
+        double height = el1 - el2;
+
+        distance = Math.pow(distance, 2) + Math.pow(height, 2);
+
+        return Math.sqrt(distance);
+    }
 
 
 

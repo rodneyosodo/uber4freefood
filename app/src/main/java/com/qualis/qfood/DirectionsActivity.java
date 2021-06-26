@@ -7,7 +7,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -18,8 +17,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -38,8 +35,9 @@ public class DirectionsActivity extends AppCompatActivity implements OnMapReadyC
     private GoogleMap mMap;
     private MarkerOptions angelMarker;
     private Polyline currentPolyline;
-    LatLng angelMarkerPosition =new LatLng(-1.320163, 36.704049);
+    LatLng angelMarkerPosition = new LatLng(-1.320163, 36.704049);
     Location location;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +56,14 @@ public class DirectionsActivity extends AppCompatActivity implements OnMapReadyC
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         try {
+
             // Customise the styling of the base map using a JSON object defined
             // in a raw resource file.
+
             boolean success = googleMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
                             DirectionsActivity.this, R.raw.style_json));
+
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions

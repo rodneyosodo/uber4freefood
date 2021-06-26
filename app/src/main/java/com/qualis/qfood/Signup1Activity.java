@@ -87,6 +87,7 @@ public class Signup1Activity extends AppCompatActivity {
                     Toast.makeText(Signup1Activity.this,"Kindly fill all details to proceed",Toast.LENGTH_LONG).show();
                 }
                 else{
+
                     HashMap<String, String> mapFirstPage = new HashMap<>();
                     mapFirstPage.put("firstname", firstName);
                     mapFirstPage.put("lastname", lastName);

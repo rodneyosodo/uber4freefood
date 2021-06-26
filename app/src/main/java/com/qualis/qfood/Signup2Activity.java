@@ -176,6 +176,11 @@ public class Signup2Activity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         Toast.makeText(Signup2Activity.this, response.toString(), Toast.LENGTH_LONG).show();
+                        try {
+                            signUpCheck(response);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
                     }
 

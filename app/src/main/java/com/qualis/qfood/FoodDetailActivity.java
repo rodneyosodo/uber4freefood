@@ -1,7 +1,9 @@
 package com.qualis.qfood;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,10 +17,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.FirebaseStorage;
@@ -27,6 +32,7 @@ import com.google.gson.Gson;
 import com.qualis.qfood.Adapters.FoodItemAdapter;
 import com.qualis.qfood.Model.Food;
 import com.qualis.qfood.ViewHolder.FoodViewHolder;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,9 +51,8 @@ import static com.qualis.qfood.Common.Common.currentUser;
 public class FoodDetailActivity extends AppCompatActivity {
 
     TextView foodName, foodDietType, foodServing, foodDescription, foodIngredients, foodSpecialNote;
+    ImageView foodImage;
 
-
-    ImageView food_image;
     CollapsingToolbarLayout collapsingToolbarLayout;
     FloatingActionButton fabFood;
 
@@ -67,7 +72,7 @@ public class FoodDetailActivity extends AppCompatActivity {
 
 
 
-
+        foodImage = (ImageView)findViewById(R.id.imgFood);
         foodName = (TextView)findViewById(R.id.food_name);
         foodDietType = (TextView)findViewById(R.id.food_diet_type);
         foodServing = (TextView)findViewById(R.id.food_serving);
@@ -115,13 +120,14 @@ public class FoodDetailActivity extends AppCompatActivity {
 
     }
 
-    private void getFood(String stringfoodId) {
+    private void getFood(String stringFoodId) {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://02bce1164642.ngrok.io/food/" + stringfoodId;
+        String URL = "https://8072162f711f.ngrok.io/food/" + stringFoodId;
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
+
             @Override
             public void onResponse(JSONObject response) {
 
@@ -175,23 +181,40 @@ public class FoodDetailActivity extends AppCompatActivity {
     }
 
     private void setFoodDetails(Food currentFood) {
+
+
+
+        storage = FirebaseStorage.getInstance();
+        storageReference =  storage.getReference("FoodImages").child(currentFood.getFoodImageId() + ".jpg");
+
         collapsingToolbarLayout.setTitle(currentFood.getFoodName());
 
         foodName.setText(currentFood.getFoodName());
-        foodDietType.setText(currentFood.getDietType());
+        foodDietType.setText("Diet Type: " + currentFood.getDietType());
         foodServing.setText("Serves: " + currentFood.getServing());
         foodDescription.setText(currentFood.getDescription());
-        foodIngredients.setText(currentFood.getSpecialIngredients());
+        foodIngredients.setText(currentFood.getSpecialIngridients());
         foodSpecialNote.setText(currentFood.getSpecialNote());
 
-
+        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                String foodImgURL = uri.toString();
+                Glide.with(FoodDetailActivity.this).load(foodImgURL).into(foodImage);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
 
     }
 
     private void checkActiveFood() throws IOException {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://d464d72f89df.ngrok.io/food";
+        String URL = "https://8072162f711f.ngrok.io/food";
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
@@ -273,7 +296,7 @@ public class FoodDetailActivity extends AppCompatActivity {
     private void addFood(String stringfoodId) throws JSONException {
 
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String URL = "https://d464d72f89df.ngrok.io/food/" + stringfoodId;
+        String URL = "https://8072162f711f.ngrok.io/food/" + stringfoodId;
 
         String updatedAt = new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
 

@@ -29,8 +29,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:layout_margin="2dp"
-            android:src="@drawable/angel_icon_bmp"/>
+            android:layout_margin="2dp"/>
         </LinearLayout>
 
         <LinearLayout
