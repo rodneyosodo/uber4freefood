@@ -26,7 +26,7 @@ func CreateFood(c *gin.Context) {
 		return
 	}
 	//create food post
-	food := models.Food{FoodName: input.FoodName, DietType: input.DietType,	Description: input.Description,	SpecialIngridients: input.SpecialIngridients, Serving: input.Serving,	SpecialNote: input.SpecialNote,	FoodImageId: input.FoodImageId,	LocationLat: input.LocationLat,	LocationLong: input.LocationLong, Status: input.Status}
+	food := models.Food{FoodName: input.FoodName, DietType: input.DietType,	Description: input.Description,	SpecialIngridients: input.SpecialIngridients, Serving: input.Serving,	SpecialNote: input.SpecialNote,	FoodImageId: input.FoodImageId,	LocationLat: input.LocationLat,	LocationLong: input.LocationLong, AngelUserID:input.AngelUserID, HumanUserID: input.HumanUserID, Status: input.Status}
 	db.Create(&food)
 	c.JSON(http.StatusOK, gin.H{"data": food})
 }

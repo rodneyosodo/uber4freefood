@@ -3,16 +3,17 @@ package models
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	//"github.com/spf13/viper"
+	"github.com/spf13/viper"
 )
 
  func SetupModels () *gorm.DB {
+	viper.AutomaticEnv()
 	//read .env file
-	viper_user := "postgres" //viper.Get("POSTGRES_USER")
- 	viper_password := "#Avrilla8" //viper.Get("POSTGRES_PASSWORD")
-	viper_db := "foodApi" //viper.Get("POSTGRES_DB")
-	viper_host := "localhost" //viper.Get("POSTGRES_HOST")
-	viper_port := "5432" //viper.Get("POSTGRES_PORT")
+	viper_user := viper.Get("POSTGRES_USER")
+ 	viper_password := viper.Get("POSTGRES_PASSWORD")
+	viper_db := viper.Get("POSTGRES_DB")
+	viper_host := viper.Get("POSTGRES_HOST")
+	viper_port := viper.Get("POSTGRES_PORT")
 	//formart
 	prosgret_conname := fmt.Sprintf("host=%v port=%v user=%v dbname=%v password=%v sslmode=disable", viper_host, viper_port, viper_user, viper_db, viper_password)
 	fmt.Println("conname is\t\t", prosgret_conname)

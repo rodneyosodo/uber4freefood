@@ -24,7 +24,12 @@ This return all the records from the table
             "foodImageId": "",
             "locationLat": "",
             "locationLong": "",
-            "status": ""
+            "angelUserID": "",
+	        "humanUserID": "",
+            "status": "",
+	        "CreatedAt": "",
+	        "UpdatedAt": "",
+	        "DeletedAt": ""
         }
     ]
 }
@@ -45,6 +50,8 @@ This is used to create a record
             "foodImageId": "",
             "locationLat": "",
             "locationLong": "",
+            "angelUserID": "",
+	        "humanUserID": "",
             "status": ""
         }
     ]
@@ -65,6 +72,8 @@ return specific record from given id
             "foodImageId": "",
             "locationLat": "",
             "locationLong": "",
+            "angelUserID": "",
+	        "humanUserID": "",
             "status": ""
         }
     ]
@@ -88,6 +97,8 @@ returns
             "foodImageId": "",
             "locationLat": "",
             "locationLong": "",
+            "angelUserID": "",
+	        "humanUserID": "",
             "status": ""
         }
     ]
