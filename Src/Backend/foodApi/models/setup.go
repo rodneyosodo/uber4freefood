@@ -1,16 +1,17 @@
 package models
- import (
+
+import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/spf13/viper"
 )
 
- func SetupModels () *gorm.DB {
+func SetupModels() *gorm.DB {
 	viper.AutomaticEnv()
 	//read .env file
 	viper_user := viper.Get("POSTGRES_USER")
- 	viper_password := viper.Get("POSTGRES_PASSWORD")
+	viper_password := viper.Get("POSTGRES_PASSWORD")
 	viper_db := viper.Get("POSTGRES_DB")
 	viper_host := viper.Get("POSTGRES_HOST")
 	viper_port := viper.Get("POSTGRES_PORT")

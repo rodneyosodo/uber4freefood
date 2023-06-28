@@ -2,12 +2,12 @@ package controllers
 
 import (
 	models "foodApi/models"
-	"net/http"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+	"net/http"
 )
 
-//get /food (all food)
+// get /food (all food)
 func FindFood(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -16,7 +16,8 @@ func FindFood(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"data": foods})
 }
-//create new food post
+
+// create new food post
 func CreateFood(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -26,12 +27,12 @@ func CreateFood(c *gin.Context) {
 		return
 	}
 	//create food post
-	food := models.Food{FoodName: input.FoodName, DietType: input.DietType,	Description: input.Description,	SpecialIngridients: input.SpecialIngridients, Serving: input.Serving,	SpecialNote: input.SpecialNote,	FoodImageId: input.FoodImageId,	LocationLat: input.LocationLat,	LocationLong: input.LocationLong, AngelUserID:input.AngelUserID, HumanUserID: input.HumanUserID, Status: input.Status}
+	food := models.Food{FoodName: input.FoodName, DietType: input.DietType, Description: input.Description, SpecialIngridients: input.SpecialIngridients, Serving: input.Serving, SpecialNote: input.SpecialNote, FoodImageId: input.FoodImageId, LocationLat: input.LocationLat, LocationLong: input.LocationLong, AngelUserID: input.AngelUserID, HumanUserID: input.HumanUserID, Status: input.Status}
 	db.Create(&food)
 	c.JSON(http.StatusOK, gin.H{"data": food})
 }
 
-//find food /food/:id
+// find food /food/:id
 func FindFoodwID(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -43,7 +44,8 @@ func FindFoodwID(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"data": food})
 }
-//update food status
+
+// update food status
 func UpdateFood(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	//get model
@@ -60,7 +62,8 @@ func UpdateFood(c *gin.Context) {
 	db.Model(&food).Updates(input)
 	c.JSON(http.StatusOK, gin.H{"data": food})
 }
-//delete food /food/:id
+
+// delete food /food/:id
 func DeleteFood(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	//get model
