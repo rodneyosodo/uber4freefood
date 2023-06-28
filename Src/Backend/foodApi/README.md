@@ -1,15 +1,19 @@
 # uber4freefood
+
 ## Food Api
 
 ###### Running
+
 Clone files into go src directory
 run `docker-compose up`
 
 ###### port `*:8080`
 
 ###### Api Routes
+
 `GET    /food`
 This return all the records from the table
+
 ```
 {
     "data": [
@@ -37,6 +41,7 @@ This return all the records from the table
 
 `POST   /food`
 This is used to create a record
+
 ```
 {
     "data": [
@@ -57,8 +62,10 @@ This is used to create a record
     ]
 }
 ```
+
 `GET    /food/:id`
 return specific record from given id
+
 ```
 {
     "data": [
@@ -79,10 +86,12 @@ return specific record from given id
     ]
 }
 ```
-PATCH  /food/:id
+
+PATCH /food/:id
 Edit staus for food
 `{"Status": ""}`
 returns
+
 ```
 {
     "data": [
@@ -104,8 +113,10 @@ returns
     ]
 }
 ```
+
 `DELETE /food/:id`
 delete specified record
+
 ```
 {
     "data": true
